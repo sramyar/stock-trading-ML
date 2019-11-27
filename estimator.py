@@ -15,39 +15,39 @@ class Estimator:
         self.train_start = trainstart
         self.train_end = trainend
         self.test_start = teststart
-        self.test_end = testned
+        self.test_end = testend
 
         self.tickers = tickers_list
         self.data = dataset
         self.models = []
         self.predicts = []
         
-    def get_data(self, start_date, end_date):
+    def get_data(self, start_date, end_date, ticker):
         '''
         INPUT - self
 
         OUTPUT - a dictionary mapping the data for each corresponding ticker
         '''
-        dataset = {}
+        #dataset = {}
         
-        for ticker in self.tickers:
+        #for ticker in self.tickers:
             try:
                 xy = []
 
                 frame = self.data[(self.data.ticker == ticker) & 
-                self.data.date <= end_date) & (self.data.date >= start_date)]
+                (self.data.date <= end_date) & (self.data.date >= start_date)]
 
                 xy.append(frame[['open', 'high', 'low', 'close', 'volume']])
                 
                 xy.append(frame[['adj_close']])
 
-                dataset[ticker] = xy
+                #dataset[ticker] = xy
 
             except:
                 print('No such date available in the dataset. Choose dates again.')
                 break
         
-        return dataset
+        return xy #dataset
 
 
     def train(self):
@@ -56,10 +56,10 @@ class Estimator:
 
         OUTPUT - Returns True when models are succesfully learned
         '''
-        train_data = self.get_data(self.train_start, self.train_end)
 
         for ticker in self.tickers:
-            X, y = train_data[ticker][0], train_data[ticker][1]
+            train_data = self.get_data(self.train_start, self.train_end, ticker)
+            X, y = train_data[0], train_data[1]
             model = self.learner.fit(X,y)
             self.models.append((ticker, model))
         
@@ -84,4 +84,21 @@ class Estimator:
             self.predicts.append(k, model.predict(Xtest))
 
         return True
+
+    def show_results(self):
+        '''
+        INPUT - self
+
+        OUPUT - Outputs the train and test results
+        '''
+
+        self.train()
+
+        for tm in self.models:
+            test_data = self.get_data(self.test_start, self.test_end, ticker = tm[0])
+            X = test_data[0]
+            y = test_data[1]
+            print("R-squared on test data for {} between {} and {} is {}".format(
+                tm[0], self.test_start, self.test_end,
+                tm[1].score(X,y)))
 
