@@ -8,9 +8,13 @@ class Estimator:
         and the list of tickers
         '''
         if estimator_type == 'linreg':
-            from sklearn.linear_model import LinearRegression
-
             self.learner = LinearRegression()
+        if estimator_type == 'knn':
+            self.learner = KNeighborsRegressor()
+        if estimator_type == 'gbr':
+            self.learner = GradientBoostingRegressor()
+        if estimator_type == 'rfr':
+            self.learner = RandomForestRegressor()
 
         self.train_start = trainstart
         self.train_end = trainend
