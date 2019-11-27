@@ -30,28 +30,21 @@ class Estimator:
         '''
         INPUT - self
 
-        OUTPUT - a dictionary mapping the data for each corresponding ticker
+        OUTPUT - X and y as features and labels
         '''
-        #dataset = {}
-        
-        #for ticker in self.tickers:
-            try:
-                xy = []
+        try:
 
-                frame = self.data[(self.data.ticker == ticker) & 
-                (self.data.date <= end_date) & (self.data.date >= start_date)]
+            frame = self.data[(self.data.ticker == ticker) & 
+            (self.data.date <= end_date) & (self.data.date >= start_date)]
 
-                xy.append(frame[['open', 'high', 'low', 'close', 'volume']])
+            X = frame[['open', 'high', 'low', 'close', 'volume']]
                 
-                xy.append(frame[['adj_close']])
+            y = frame[['adj_close']]
 
-                #dataset[ticker] = xy
-
-            except:
-                print('No such date available in the dataset. Choose dates again.')
-                break
+        except:
+            print('No such date available in the dataset. Choose dates again.')
         
-        return xy #dataset
+        return X, y
 
 
     def train(self):
@@ -62,8 +55,7 @@ class Estimator:
         '''
 
         for ticker in self.tickers:
-            train_data = self.get_data(self.train_start, self.train_end, ticker)
-            X, y = train_data[0], train_data[1]
+            X, y  = self.get_data(self.train_start, self.train_end, ticker)
             model = self.learner.fit(X,y)
             self.models.append((ticker, model))
         
@@ -75,17 +67,13 @@ class Estimator:
 
         OUTPUT - returns true when test is done successfully
         '''
-
-        test_data = self.get_data(self.test_start, self.test_end)
-
-        for k,v in test_data.items():
-            Xtest = v[0]
-            ytest = v[1]
+        for ticker in self.tickers:
+            Xtest, ytest = self.get_data(self.test_start, self.test_end, ticker)
             try:
-                model = [item[1] for item in self.models if item[0] == k][0]
+                model = [item[1] for item in self.models if item[0] == ticker][0]
             except:
                 print('Something about ticker consistency not right!')
-            self.predicts.append(k, model.predict(Xtest))
+            self.predicts.append((ticker, model.predict(Xtest)))
 
         return True
 
@@ -99,9 +87,7 @@ class Estimator:
         self.train()
 
         for tm in self.models:
-            test_data = self.get_data(self.test_start, self.test_end, ticker = tm[0])
-            X = test_data[0]
-            y = test_data[1]
+            X, y = self.get_data(self.test_start, self.test_end, ticker = tm[0])
             print("R-squared on test data for {} between {} and {} is {}".format(
                 tm[0], self.test_start, self.test_end,
                 tm[1].score(X,y)))
