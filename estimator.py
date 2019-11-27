@@ -17,11 +17,12 @@ class Estimator:
             try:
                 xy = []
 
-                xy[0] = data[(data.ticker == ticker) & (data.date <= end_date) &
-                (data.date >= start_date)][['open', 'high', 'low', 'close', 'volume']]
+                frame = data[(data.ticker == ticker) & (data.date <= end_date) &
+                (data.date >= start_date)]
+
+                xy[0] = frame[['open', 'high', 'low', 'close', 'volume']]
                 
-                xy[1] = data[(data.ticker == ticker) & (data.date <= end_date) &
-                (data.date >= start_date)][['adj_close']]
+                xy[1] = frame[['adj_close']]
 
             except:
                 print('No such date available in the dataset. Choose dates again.')
