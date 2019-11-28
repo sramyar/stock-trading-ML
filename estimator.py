@@ -1,7 +1,7 @@
 class Estimator:
 
-    def __init__(self, estimator_type, trainstart, trainend, teststart,
-                    testend, tickers_list, dataset):
+    def __init__(self, estimator_type, trainstart, trainend, 
+                tickers_list, dataset):
         '''
         Constructor that takes in the type of estimator as a parameter
         As well as start and end dates for test and train data, the dataset
@@ -18,8 +18,6 @@ class Estimator:
 
         self.train_start = trainstart
         self.train_end = trainend
-        self.test_start = teststart
-        self.test_end = testend
 
         self.tickers = tickers_list
         self.data = dataset
@@ -39,7 +37,7 @@ class Estimator:
 
             X = frame[['open', 'high', 'low', 'close', 'volume']]
                 
-            y = frame[['adj_close']]
+            y = np.ravel(frame[['adj_close']])
 
         except:
             print('No such date available in the dataset. Choose dates again.')
@@ -61,14 +59,14 @@ class Estimator:
         
         return True
 
-    def test(self):
+    def test(self, start, end):
         '''
         INPUT - start and end date for test data as well as list of tickers
 
         OUTPUT - returns true when test is done successfully
         '''
         for ticker in self.tickers:
-            Xtest, ytest = self.get_data(self.test_start, self.test_end, ticker)
+            Xtest, ytest = self.get_data(start, end, ticker)
             try:
                 model = [item[1] for item in self.models if item[0] == ticker][0]
             except:
@@ -77,7 +75,7 @@ class Estimator:
 
         return True
 
-    def show_results(self):
+    def show_results(self, start, end):
         '''
         INPUT - self
 
@@ -87,7 +85,7 @@ class Estimator:
         self.train()
 
         for tm in self.models:
-            X, y = self.get_data(self.test_start, self.test_end, ticker = tm[0])
+            X, y = self.get_data(start, end, ticker = tm[0])
             print("R-squared on test data for {} between {} and {} is {}".format(
                 tm[0], self.test_start, self.test_end,
                 tm[1].score(X,y)))
