@@ -1,6 +1,11 @@
 # Installation
 Python 3 is used for coding. Packages used are numpy, pandas, and scikit-learn.
 
+# Files
+The estimator class is contained in `estimator.py`. This is the backbone of the analysis and contains the *Estimator* class with the required fields and methods. It follows the PEP8 guidelines.
+
+The `expoloration.ipynb` is the jupyter notebook that was used throughout the project merely as scratch paper.
+
 # Motivation
 Using machine learning to predict stock adjusted closed price. We address the following questions:
 
@@ -10,7 +15,7 @@ Using machine learning to predict stock adjusted closed price. We address the fo
 
 # Descriptions
 
-There estimator class is contained in `estimator.py`. The approach taken in this project follows the CRISP-DM framework. Particularly, the following steps have been taken:
+The approach taken in this project follows the CRISP-DM framework. Particularly, the following steps have been taken:
 
 1. Business Understanding: The business understanding is motivated by and focused on the three questions discussed above. Mainly, we seek to predict adjusted close price based on a set of features and use supervised (regression) ML techniques to address the problem.
 
